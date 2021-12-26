@@ -15,6 +15,8 @@ void main() {
 
     if (input.toLowerCase() == 'n') break;
   }
+
+  // end of program
 }
 
 void playGame() {
