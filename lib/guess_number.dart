@@ -16,19 +16,43 @@ void main() {
     if (input.toLowerCase() == 'n') break;
   }
 
-  // end of program
+  print('\n\nYou\'ve played ${Game.guessCountList.length} games');
+  for (var i = 0; i < Game.guessCountList.length; i++) {
+    print('🚀 Game #${i + 1}: ${Game.guessCountList[i]} guesses');
+  }
+
+  /*var myList = [];
+  myList.add(1);
+  myList.add('hello');
+  myList.add(false);
+
+  for (var i = 0; i < myList.length; i++) {
+    print(myList[i]);
+  }
+
+  myList.forEach((item) {
+    print(item);
+  });*/
 }
 
 void playGame() {
-  var game = Game();
+  int? maxRandom;
+  do {
+    stdout.write('\nEnter a maximum number to random: ');
+    var input = stdin.readLineSync();
+    maxRandom = int.tryParse(input!);
+  } while (maxRandom == null);
+
+  var game = Game(maxRandom: maxRandom);
   var isCorrect = false;
 
+  print('');
   print('╔════════════════════════════════════════');
   print('║            GUESS THE NUMBER            ');
   print('╟────────────────────────────────────────');
 
   do {
-    stdout.write('║ Guess the number between 1 and ${Game.maxRandom}: ');
+    stdout.write('║ Guess the number between 1 and $maxRandom: ');
     var input = stdin.readLineSync();
     var guess = int.tryParse(input!);
     if (guess == null) {
@@ -47,6 +71,8 @@ void playGame() {
       print('║ ➜ $guess is CORRECT ❤, total guesses: ${game.guessCount}');
       print('╟────────────────────────────────────────');
       isCorrect = true;
+      //Game.guessCountList.add(game.guessCount);
+      game.addCountList();
     }
   } while (!isCorrect);
 
