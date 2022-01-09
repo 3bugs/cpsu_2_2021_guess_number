@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
       ),
       home: const HomePage(),
     );
@@ -28,45 +28,56 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('GUESS THE NUMBER'),
       ),
-      body: Container(
-        // เทียบได้กับแท็ก <div> ของ HTML
-        decoration: BoxDecoration(
-            color: Colors.yellow,
-            border: Border.all(width: 5.0, color: Colors.blue),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.purple.shade50,
+            borderRadius: BorderRadius.circular(16.0),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                offset: const Offset(2.0, 5.0),
-                blurRadius: 5.0,
+                color: Colors.purple.shade100,
+                offset: Offset(5.0, 5.0),
                 spreadRadius: 2.0,
-              ),
-            ]),
-        //alignment: Alignment.center,
-        child: Center(
+                blurRadius: 5.0,
+              )
+            ],
+          ),
+          alignment: Alignment.center,
           child: Column(
-            //mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
-            //crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image.asset('assets/images/doraemon.png', width: 100.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Hello',
-                    style: TextStyle(fontSize: 30.0, color: Color(0x80FF0000)),
-                  ),
-                  TextButton(
-                    child: Text('TEST'),
-                    onPressed: () {},
+                  Image.asset('assets/images/guess_logo.png', width: 90.0),
+                  SizedBox(width: 8.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('GUESS',
+                          style: TextStyle(
+                              fontSize: 36.0, color: Colors.purple.shade200)),
+                      Text(
+                        'THE NUMBER',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.purple.shade600,
+                          //fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              OutlinedButton(
-                child: Text('RANDOM'),
-                onPressed: () {
-                  // โค้ดที่จะทำงานเมื่อกดปุ่ม
-                },
+              SizedBox(height: 24.0),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(textAlign: TextAlign.center),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: ElevatedButton(child: Text('GUESS'), onPressed: () {}),
               ),
             ],
           ),
