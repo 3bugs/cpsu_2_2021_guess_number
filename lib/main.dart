@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'game.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -21,9 +23,33 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
-
   final _controller = TextEditingController();
+  late Game _game;
+
+  HomePage({Key? key}) : super(key: key) {
+    _game = Game(maxRandom: 100);
+  }
+
+  void _showOkDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +94,13 @@ class HomePage extends StatelessWidget {
                   //SizedBox(width: 10.0),
                 ],
               ),*/
+              /*Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(child: Container(color: Colors.green, width: 100.0, height: 50.0)),
+                  Container(color: Colors.red, width: 50.0, height: 50.0),
+                ],
+              ),*/
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -100,6 +133,12 @@ class HomePage extends StatelessWidget {
                 child: TextField(
                   textAlign: TextAlign.center,
                   controller: _controller,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.7),
+                    border: OutlineInputBorder(),
+                    hintText: 'ทายเลขตั้งแต่ 1 ถึง 100',
+                  ),
                 ),
               ),
               Padding(
@@ -108,25 +147,26 @@ class HomePage extends StatelessWidget {
                   child: Text('GUESS'),
                   onPressed: () {
                     var input = _controller.text;
+                    var guess = int.tryParse(input);
 
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('RESULT'),
-                          content: Text(input),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    if (guess == null) {
+                      _showOkDialog(context, 'ERROR',
+                          'กรอกข้อมูลไม่ถูกต้อง ให้กรอกเฉพาะตัวเลขเท่านั้น');
+                      return;
+                    }
+
+                    late String message;
+                    var guessResult = _game.doGuess(guess);
+                    if (guessResult > 0) {
+                      message = '$guess มากเกินไป กรุณาลองใหม่';
+                    } else if (guessResult < 0) {
+                      message = '$guess น้อยเกินไป กรุณาลองใหม่';
+                    } else {
+                      message =
+                          '$guess ถูกต้องครับ 🎉\n\nคุณทายทั้งหมด ${_game.guessCount} ครั้ง';
+                    }
+
+                    _showOkDialog(context, 'RESULT', message);
                   },
                 ),
               ),
