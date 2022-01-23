@@ -1,15 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'game.dart';
 
 void main() {
-  runApp(const MyApp());
+  const app = MyApp();
+  runApp(app);
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  // callback method
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -53,6 +56,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var showSeven = true;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('GUESS THE NUMBER'),
@@ -130,19 +135,29 @@ class HomePage extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  textAlign: TextAlign.center,
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.7),
-                    border: OutlineInputBorder(),
-                    hintText: 'ทายเลขตั้งแต่ 1 ถึง 100',
-                  ),
-                ),
+                child: Text('HELLO'),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 1; i <= 3; i++) buildButton(num: i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 4; i <= 6; i++) buildButton(num: i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 7; i <= 9; i++) buildButton(num: i),
+                ],
+              ),
+              buildButton(num: 0),
               Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   child: Text('GUESS'),
                   onPressed: () {
@@ -174,6 +189,17 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildButton({int? num}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: OutlinedButton(
+          onPressed: () {
+            print('You pressed $num');
+          },
+          child: Text('$num')),
     );
   }
 }
