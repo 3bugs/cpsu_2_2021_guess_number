@@ -19,19 +19,27 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.purple,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  final _controller = TextEditingController();
+class HomePage extends StatefulWidget {
   late Game _game;
 
   HomePage({Key? key}) : super(key: key) {
     _game = Game(maxRandom: 100);
   }
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  var _input = '';
+  var _feedbackText = 'ทายเลข 1 ถึง 100';
 
   void _showOkDialog(BuildContext context, String title, String content) {
     showDialog(
@@ -56,8 +64,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var showSeven = true;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('GUESS THE NUMBER'),
@@ -81,31 +87,6 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /*Row(
-                children: [
-                  Container(width: 50.0, height: 50.0, color: Colors.blue),
-                  Expanded(
-                    child: Container(
-                      width: 30.0,
-                      height: 50.0,
-                      //color: Colors.pink,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Text('FLUTTER', textAlign: TextAlign.end,),
-                      ),
-                      alignment: Alignment.centerRight,
-                    ),
-                  ),
-                  //SizedBox(width: 10.0),
-                ],
-              ),*/
-              /*Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(child: Container(color: Colors.green, width: 100.0, height: 50.0)),
-                  Container(color: Colors.red, width: 50.0, height: 50.0),
-                ],
-              ),*/
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -133,55 +114,67 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
+              Text(_input, style: TextStyle(fontSize: 50.0)),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('HELLO'),
+                child: Text(_feedbackText, style: TextStyle(fontSize: 20.0)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (var i = 1; i <= 3; i++) buildButton(num: i),
+                  for (var i = 1; i <= 3; i++) _buildButton(num: i),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (var i = 4; i <= 6; i++) buildButton(num: i),
+                  for (var i = 4; i <= 6; i++) _buildButton(num: i),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (var i = 7; i <= 9; i++) buildButton(num: i),
+                  for (var i = 7; i <= 9; i++) _buildButton(num: i),
                 ],
               ),
-              buildButton(num: 0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildButton(num: -2),
+                  _buildButton(num: 0),
+                  _buildButton(num: -1),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   child: Text('GUESS'),
                   onPressed: () {
-                    var input = _controller.text;
-                    var guess = int.tryParse(input);
+                    var guess = int.tryParse(_input);
 
                     if (guess == null) {
-                      _showOkDialog(context, 'ERROR',
-                          'กรอกข้อมูลไม่ถูกต้อง ให้กรอกเฉพาะตัวเลขเท่านั้น');
+                      _showOkDialog(context, 'ERROR', 'กรุณากรอกตัวเลข');
                       return;
                     }
 
                     late String message;
-                    var guessResult = _game.doGuess(guess);
+                    var guessResult = widget._game.doGuess(guess);
                     if (guessResult > 0) {
-                      message = '$guess มากเกินไป กรุณาลองใหม่';
+                      setState(() {
+                        _feedbackText = '$guess : มากเกินไป';
+                        _input = '';
+                      });
                     } else if (guessResult < 0) {
-                      message = '$guess น้อยเกินไป กรุณาลองใหม่';
+                      setState(() {
+                        _feedbackText = '$guess : น้อยเกินไป';
+                        _input = '';
+                      });
                     } else {
-                      message =
-                          '$guess ถูกต้องครับ 🎉\n\nคุณทายทั้งหมด ${_game.guessCount} ครั้ง';
+                      setState(() {
+                        _feedbackText =
+                            '$guess : ถูกต้อง 🎉 (ทาย ${widget._game.guessCount} ครั้ง)';
+                      });
                     }
-
-                    _showOkDialog(context, 'RESULT', message);
                   },
                 ),
               ),
@@ -192,14 +185,40 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildButton({int? num}) {
+  Widget _buildButton({int? num}) {
+    Widget child = Text('$num', style: TextStyle(fontSize: 20.0));
+    if (num == -2) {
+      child = Icon(Icons.close);
+    } else if (num == -1) {
+      child = Icon(Icons.backspace_outlined);
+    }
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.all(6.0),
       child: OutlinedButton(
-          onPressed: () {
-            print('You pressed $num');
-          },
-          child: Text('$num')),
+        onPressed: () {
+          setState(() {
+            if (num == -2) {
+              setState(() {
+                _input = '';
+              });
+            } else if (num == -1) {
+              if (_input.length > 0) {
+                setState(() {
+                  _input = _input.substring(0, _input.length - 1);
+                });
+              }
+            } else {
+              if (_input.length >= 3) return;
+
+              setState(() {
+                _input = '$_input$num';
+              });
+            }
+          });
+        },
+        child: child,
+      ),
     );
   }
 }
