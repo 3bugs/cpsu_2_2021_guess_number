@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:guess_number/login_page.dart';
+import 'package:guess_number/test_page.dart';
 
 import 'game.dart';
 
@@ -20,8 +22,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        textTheme: TextTheme(
+          headline1: TextStyle(
+            fontSize: 30.0,
+            fontWeight: FontWeight.bold,
+          ),
+          headline6: TextStyle(
+            fontSize: 22.0,
+            //fontWeight: FontWeight.bold,
+          ),
+          bodyText2: TextStyle(
+            fontSize: 14.0,
+          ),
+        ),
       ),
-      home: HomePage(),
+      home: LoginPage(),
     );
   }
 }
