@@ -13,7 +13,10 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   static const PIN = '123456';
   //static const PIN_LENGTH = 6;
-  var _input = ''; // state variable
+  var _input = '123'; // state variable
+
+  // single source of truth
+
   var _isLoading = false;
 
   @override
